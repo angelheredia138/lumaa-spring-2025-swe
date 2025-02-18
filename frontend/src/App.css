@@ -138,18 +138,19 @@ input:focus {
 }
 
 button {
-  background-color: var(--primary-color);
-  color: white;
+  background-color: transparent;
+  color: var(--primary-color);
   padding: 0.75rem 1.5rem;
-  border: none;
+  border: 2px solid var(--primary-color);
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 button:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--primary-color);
+  color: white;
 }
 
 /* Task List Styles */
@@ -194,6 +195,22 @@ button:hover {
 .task-content.completed h3 {
   text-decoration: line-through;
   color: var(--text-secondary);
+}
+
+.task-edit-form {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.task-edit-form input {
+  margin: 0;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 /* Error Message Styles */

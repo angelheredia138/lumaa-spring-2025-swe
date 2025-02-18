@@ -6,6 +6,7 @@ const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState({ title: "", description: "" });
   const [error, setError] = useState("");
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const fetchTasks = async () => {
     try {
@@ -35,12 +36,15 @@ const TaskList: React.FC = () => {
     }
   };
 
-  const handleUpdateTask = async (id: number, isComplete: boolean) => {
+  const handleUpdateTask = async (id: number, updates: Partial<Task>) => {
     try {
-      await api.put(`/tasks/${id}`, { isComplete });
+      await api.put(`/tasks/${id}`, updates);
       setTasks(
-        tasks.map((task) => (task.id === id ? { ...task, isComplete } : task))
+        tasks.map((task) => (task.id === id ? { ...task, ...updates } : task))
       );
+      if (editingTask?.id === id) {
+        setEditingTask(null);
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(`Failed to update task: ${err.message}`);
@@ -97,15 +101,52 @@ const TaskList: React.FC = () => {
             <input
               type="checkbox"
               checked={task.isComplete}
-              onChange={(e) => handleUpdateTask(task.id, e.target.checked)}
+              onChange={(e) =>
+                handleUpdateTask(task.id, { isComplete: e.target.checked })
+              }
             />
-            <div
-              className={`task-content ${task.isComplete ? "completed" : ""}`}
-            >
-              <h3>{task.title}</h3>
-              {task.description && <p>{task.description}</p>}
-            </div>
-            <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+            {editingTask?.id === task.id ? (
+              <div className="task-edit-form">
+                <input
+                  type="text"
+                  value={editingTask.title}
+                  onChange={(e) =>
+                    setEditingTask({ ...editingTask, title: e.target.value })
+                  }
+                />
+                <input
+                  type="text"
+                  value={editingTask.description || ""}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      description: e.target.value,
+                    })
+                  }
+                />
+                <button onClick={() => handleUpdateTask(task.id, editingTask)}>
+                  Save
+                </button>
+                <button onClick={() => setEditingTask(null)}>Cancel</button>
+              </div>
+            ) : (
+              <>
+                <div
+                  className={`task-content ${
+                    task.isComplete ? "completed" : ""
+                  }`}
+                >
+                  <h3>{task.title}</h3>
+                  {task.description && <p>{task.description}</p>}
+                </div>
+                <div className="task-actions">
+                  <button onClick={() => setEditingTask(task)}>Edit</button>
+                  <button onClick={() => handleDeleteTask(task.id)}>
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
