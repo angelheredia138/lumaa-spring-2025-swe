@@ -229,6 +229,50 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+/* Password Requirements Styles */
+.password-requirements {
+  text-align: left;
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.password-requirements p {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.password-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.password-requirements li {
+  padding: 0.25rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.password-requirements li::before {
+  content: "•";
+  color: var(--text-secondary);
+}
+
+.password-requirements li.valid::before {
+  content: "✓";
+  color: var(--success-color);
+}
+
+.password-requirements li.invalid::before {
+  content: "×";
+  color: var(--error-color);
+}
+
 /* Responsive Design */
 @media (max-width: 640px) {
   .task-item {

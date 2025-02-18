@@ -3,6 +3,30 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { RegisterCredentials } from "../../types/types";
 
+const validatePassword = (
+  password: string
+): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
+  if (password.length < 8) {
+    errors.push("At least 8 characters long");
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push("One uppercase letter");
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push("One lowercase letter");
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push("One number");
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    errors.push("One special character");
+  }
+
+  return { isValid: errors.length === 0, errors };
+};
+
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState<RegisterCredentials>({
@@ -11,9 +35,18 @@ const Register: React.FC = () => {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const { isValid, errors } = validatePassword(credentials.password);
+    setPasswordErrors(errors);
+
+    if (!isValid) {
+      return;
+    }
+
     if (credentials.password !== credentials.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -60,6 +93,25 @@ const Register: React.FC = () => {
             }
             required
           />
+        </div>
+        <div className="password-requirements">
+          <p>Password must contain:</p>
+          <ul>
+            {[
+              "At least 8 characters long",
+              "One uppercase letter",
+              "One lowercase letter",
+              "One number",
+              "One special character",
+            ].map((req) => (
+              <li
+                key={req}
+                className={passwordErrors.includes(req) ? "invalid" : "valid"}
+              >
+                {req}
+              </li>
+            ))}
+          </ul>
         </div>
         <div>
           <input

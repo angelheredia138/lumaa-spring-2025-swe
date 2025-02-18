@@ -6,9 +6,52 @@ import jwt from "jsonwebtoken";
 
 const userRepository = AppDataSource.getRepository(User);
 
+const validatePassword = (
+  password: string
+): { isValid: boolean; message: string } => {
+  if (password.length < 8) {
+    return {
+      isValid: false,
+      message: "Password must be at least 8 characters long",
+    };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return {
+      isValid: false,
+      message: "Password must contain at least one uppercase letter",
+    };
+  }
+  if (!/[a-z]/.test(password)) {
+    return {
+      isValid: false,
+      message: "Password must contain at least one lowercase letter",
+    };
+  }
+  if (!/[0-9]/.test(password)) {
+    return {
+      isValid: false,
+      message: "Password must contain at least one number",
+    };
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    return {
+      isValid: false,
+      message: "Password must contain at least one special character",
+    };
+  }
+  return { isValid: true, message: "" };
+};
+
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
+
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      res.status(400).json({ message: passwordValidation.message });
+      return;
+    }
 
     // Check if user already exists
     const existingUser = await userRepository.findOne({ where: { username } });
