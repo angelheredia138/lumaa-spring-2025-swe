@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import { RegisterCredentials } from "../../types";
+import { RegisterCredentials } from "../../types/types";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();

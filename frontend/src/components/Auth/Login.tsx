@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import { LoginCredentials, AuthResponse } from "../../types";
+import { LoginCredentials, AuthResponse } from "../../types/types";
 
 interface LoginProps {
   setIsAuthenticated: (value: boolean) => void;

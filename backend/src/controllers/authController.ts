@@ -35,8 +35,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body;
 
-    // Find user
-    const user = await userRepository.findOne({ where: { username } });
+    // Find user with password field explicitly selected
+    const user = await userRepository
+      .createQueryBuilder("user")
+      .addSelect("user.password") // Explicitly select password field
+      .where("user.username = :username", { username })
+      .getOne();
+
     if (!user) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
@@ -58,6 +63,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.json({ token });
   } catch (error) {
+    console.error("Login error:", error); // Add error logging
     res.status(500).json({ message: "Error during login" });
   }
 };
